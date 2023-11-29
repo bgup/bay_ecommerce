@@ -1,13 +1,9 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import mongoose from 'mongoose';
 
 const dbConnect = async()=>{
     try {
-        const connected = mongoose.connect(process.env.MONGO_URL);
-        mongoose.set("strictQuery",true)
+        const connected = mongoose.connect('url');
         console.log(`Mongodb connected ${(await connected).connection.host}`);
-
     } catch (error) {
         console.log(`Error ${error.message}`);
         //ver la documantación
