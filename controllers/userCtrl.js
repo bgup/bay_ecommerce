@@ -5,7 +5,24 @@ import User from '../model/User.js';
 // @acces Private/Admin
 
 export const registerUserCtrl = async (req, res) => {
-    res.json({
-        msg: "User register controller"
+    const { fullname, email, password } = req.body;
+    //check user exist
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+        res.json({
+            msg: "User already exist"
+        })
+    }
+    console.log('fullname: '+fullname);
+    
+    //hash password
+    // create user
+    const user = await User.create({
+        fullname, email, password
+    });
+    res.status(201).json({
+        status:'success',
+        message: 'User registered successfully',
+        data: user
     })
 };
