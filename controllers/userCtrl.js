@@ -14,7 +14,7 @@ export const registerUserCtrl = async (req, res) => {
     }
     //hash password
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password,salt)
+    const hashedPassword = await bcrypt.hash(password, salt)
     // create the user
     const user = await User.create({
         fullname,
@@ -27,3 +27,22 @@ export const registerUserCtrl = async (req, res) => {
         data: user
     })
 };
+
+export const loginUserCtrl = async (req, res) => {
+    const { email, password } = req.body;
+
+    const userFound = await User.findOne({ email });
+    if (userFound && bcrypt.compare(password, await userFound?.password)) {
+        res.json({
+            status: "Login success",
+            message:"User login successfuly",
+            userFound
+        })
+    } else {
+
+        res.json({
+            msg: "Ivalid login"
+        })
+    }
+
+}
