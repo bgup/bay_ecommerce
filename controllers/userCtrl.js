@@ -1,28 +1,45 @@
 import User from '../model/User.js';
-
+import asyncHandler from 'express-async-handler'
+import bcrypt from "bcryptjs"
 // @desc Register user
 // @route POST /api/v1/users/register
 // @acces Private/Admin
 
-export const registerUserCtrl = async (req, res) => {
+export const registerUserCtrl = asyncHandler (async (req, res) => {
     const { fullname, email, password } = req.body;
-    //check user exist
-    const userExist = await User.findOne({ email });
-    if (userExist) {
-        res.json({
-            msg: "User already exist"
-        })
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      
+         throw new Error("User already Exist");
     }
-    console.log('fullname: '+fullname);
-    
     //hash password
-    // create user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt)
+    // create the user
     const user = await User.create({
-        fullname, email, password
-    });
+        fullname,
+        email,
+        password: hashedPassword,
+    })
     res.status(201).json({
-        status:'success',
-        message: 'User registered successfully',
+        status: 'success',
+        message: 'User create successfuly',
         data: user
     })
-};
+});
+export const loginUserCtrl = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    //find the user in db by email only
+    const userFound = await User.findOne({ email });
+    if (userFound && bcrypt.compare(password, await userFound?.password)) {
+        res.json({
+            status: "Login success",
+            message:"User login successfuly",
+            userFound
+        })
+    } else {
+        throw new Error ("Invalid login credentials")
+        
+    }
+
+})
