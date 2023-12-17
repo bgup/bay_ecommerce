@@ -3,17 +3,18 @@ import asyncHandler from 'express-async-handler'
 import bcrypt from "bcryptjs"
 import generateToken from '../utils/generateToken.js';
 import getTokenFromHeader from '../utils/getTokenFromHeader.js';
+import { verifyToken } from '../utils/verifyToken.js';
 
 // @desc Register user
 // @route POST /api/v1/users/register
 // @acces Private/Admin
 
-export const registerUserCtrl = asyncHandler (async (req, res) => {
+export const registerUserCtrl = asyncHandler(async (req, res) => {
     const { fullname, email, password } = req.body;
     const userExists = await User.findOne({ email });
     if (userExists) {
-      
-         throw new Error("User already Exist");
+
+        throw new Error("User already Exist");
     }
     //hash password
     const salt = await bcrypt.genSalt(10);
@@ -41,13 +42,13 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
     if (userFound && bcrypt.compare(password, await userFound?.password)) {
         res.json({
             status: "Login success",
-            message:"User login successfuly",
+            message: "User login successfuly",
             userFound,
-            token:generateToken(userFound?._id),
+            token: generateToken(userFound?._id),
         })
     } else {
-        throw new Error ("Invalid login credentials")
-        
+        throw new Error("Invalid login credentials")
+
     }
 
 });
@@ -57,8 +58,9 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
 // @access Private
 export const getUserProfileCtrl = asyncHandler(async (req, res) => {
     const token = getTokenFromHeader(req);
-    console.log(token);
-        
+    const verified = verifyToken(token);
+    console.log(verified);
+     
     res.json({
         msg: "Profile page"
     });
