@@ -29,6 +29,10 @@ export const registerUserCtrl = asyncHandler (async (req, res) => {
         data: user
     })
 });
+
+// @desc Login user
+// @route POST /api/v1/users/login
+// @access Public
 export const loginUserCtrl = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     //find the user in db by email only
@@ -45,4 +49,14 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
         
     }
 
-})
+});
+
+// @desc Get user profile
+// @route POST /api/v1/users/profile
+// @access Private
+export const getUserProfileCtrl = asyncHandler(async (req, res) => {
+    res.json({
+        msg: "Profile page"
+    });
+});
+
