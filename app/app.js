@@ -8,7 +8,7 @@ dbConnect();
 
 const app = express();
 app.use(express.json());
-app.use('/', userRoutes);
+app.use('/api/v1/users', userRoutes);
 //errr middleware
 app.use(notFound);
 app.use(globalErrhandler);
