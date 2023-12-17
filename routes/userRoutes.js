@@ -5,7 +5,7 @@ const userRoutes = express.Router();
 
 userRoutes.post('/register', registerUserCtrl);
 userRoutes.post('/login', loginUserCtrl);
-userRoutes.post('/profile', getUserProfileCtrl);
+userRoutes.get('/profile', getUserProfileCtrl);
 
 
 export default userRoutes;
