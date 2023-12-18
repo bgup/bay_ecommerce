@@ -8,7 +8,7 @@ import asyncHandler from 'express-async-handler'
 export const createProductCtrl = asyncHandler(async (req, res) => {
     const { name, description, brand, category, sizes, colors, user, price, totalQty } = req.body;
     console.log(req.body);
-    
+
     //product exist
     const productExist = await Product.findOne({ name });
     if (productExist) {
@@ -31,7 +31,17 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
 // @route GET /api/v1/products
 // @access Public
 export const getProductsCtrl = asyncHandler(async (req, res) => {
-    const products = await Product.find();
+    //query
+    let productQuery = Product.find();
+    //search by name
+    if (req.query.name) {
+        productQuery = productQuery.find({
+            name: { $regex: req.query.name, $options: "i" }
+        })
+    }
+    const products = await productQuery;
+
+    console.log(products);
     res.json({
         status: "success",
         products
