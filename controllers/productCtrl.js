@@ -68,9 +68,18 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
         })
     }; 
 
+    //search by price range
+    if (req.query.price) {
+        const priceRange = req.query.price.split('-');
+        productQuery = productQuery.find({
+            // gte: greater or equal
+            //lte: less than or equal
+            price: { $gte: priceRange[0], $lte:priceRange[1] }
+        })
+    }; 
+
     const products = await productQuery;
 
-    console.log(products);
     res.json({
         status: "success",
         products
