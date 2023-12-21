@@ -146,7 +146,7 @@ export const getProductCtrl = asyncHandler(async (req, res) => {
 export const updateProductCtrl = asyncHandler(async (req, res) => {
     const { name, description, brand, category, sizes, colors, user, price, totalQty } = req.body;
 
-    const product = await Product.findByIdAndUpdate(req.params.id, 
+    const product = await Product.findByIdAndUpdate(req.params.id,
         { name, description, brand, category, sizes, colors, user, price, totalQty }, { new: true });
 
     res.json({
@@ -156,7 +156,17 @@ export const updateProductCtrl = asyncHandler(async (req, res) => {
     })
 });
 
+// @desc delete product
+// @route DELETE /api/v1/products/:id/delete
+// @access Private/Admin
+export const deleteProductCtrl = asyncHandler(async (req, res) => {
+    await Product.findByIdAndDelete(req.params.id);
 
+    res.json({
+        status: 'success',
+        message: 'Product deleted successfully',
+    })
+});
 
 
 
