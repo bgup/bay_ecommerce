@@ -133,12 +133,28 @@ export const getProductCtrl = asyncHandler(async (req, res) => {
         throw new Error('Product no found.');
     }
     res.json({
-        status:'success',
-        message:'Product fetched successfully',
+        status: 'success',
+        message: 'Product fetched successfully',
         product
     })
+});
 
-});;
+
+// @desc Get single product
+// @route PUT /api/v1/products/:id
+// @access Private/Admin
+export const updateProductCtrl = asyncHandler(async (req, res) => {
+    const { name, description, brand, category, sizes, colors, user, price, totalQty } = req.body;
+
+    const product = await Product.findByIdAndUpdate(req.params.id, 
+        { name, description, brand, category, sizes, colors, user, price, totalQty }, { new: true });
+
+    res.json({
+        status: 'success',
+        message: 'Product updated successfully',
+        product
+    })
+});
 
 
 
