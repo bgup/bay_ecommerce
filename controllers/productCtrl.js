@@ -124,6 +124,23 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
 
 });
 
+// @desc Get single product
+// @route GET /api/v1/products/:id
+// @access Public
+export const getProductCtrl = asyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+        throw new Error('Product no found.');
+    }
+    res.json({
+        status:'success',
+        message:'Product fetched successfully',
+        product
+    })
+
+});;
+
+
 
 
 
