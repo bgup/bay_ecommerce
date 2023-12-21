@@ -39,7 +39,7 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
             name: { $regex: req.query.name, $options: "i" }
         })
     };
-    
+
     //search by brand
     if (req.query.brand) {
         productQuery = productQuery.find({
@@ -52,21 +52,21 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
         productQuery = productQuery.find({
             category: { $regex: req.query.category, $options: "i" }
         })
-    }; 
+    };
 
     //search by sizes
     if (req.query.sizes) {
         productQuery = productQuery.find({
             sizes: { $regex: req.query.sizes, $options: "i" }
         })
-    }; 
+    };
 
     //search by colors
     if (req.query.colors) {
         productQuery = productQuery.find({
             colors: { $regex: req.query.colors, $options: "i" }
         })
-    }; 
+    };
 
     //search by price range
     if (req.query.price) {
@@ -74,9 +74,25 @@ export const getProductsCtrl = asyncHandler(async (req, res) => {
         productQuery = productQuery.find({
             // gte: greater or equal
             //lte: less than or equal
-            price: { $gte: priceRange[0], $lte:priceRange[1] }
+            price: { $gte: priceRange[0], $lte: priceRange[1] }
         })
-    }; 
+    };
+
+    //Pagination
+    //page 
+    const page = parseInt(req.query.page) ? parseInt(req.query.page) : 1;
+    // limit
+    const limit = parseInt(req.query.limit) ? parseInt(req.query.limit) : 10;    
+    //startIdx  
+    const startIdx = (page - 1) * limit;
+    //endIdx
+    const endIdx = page * limit;
+    //total
+    const total = await Product.countDocuments();
+    console.log(`startIdx: ${startIdx} endIdx: ${endIdx}`);
+    
+    productQuery = productQuery.skip(startIdx).limit(limit);
+
 
     const products = await productQuery;
 
