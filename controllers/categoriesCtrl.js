@@ -12,11 +12,9 @@ export const createCategoryCtrl = asyncHandler(async (req, res) => {
         throw new Error('Category already exist.');
     }
     const category = await Category.create({
-        name,
+        name: name.toLowerCase(),
         user: req.userAuthID
     })
-    console.log(category.user);
-
     res.json({
         status: 'success',
         message: 'Category created successfully',

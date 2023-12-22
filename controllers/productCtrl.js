@@ -1,3 +1,4 @@
+import Category from '../model/Category.js';
 import Product from '../model/Product.js';
 import asyncHandler from 'express-async-handler'
 
@@ -14,11 +15,19 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
     if (productExist) {
         throw new Error('Product already exist');
     }
+    //Find the category
+    const categoryFound = await Category.findOne({name:  category});
+    if (!categoryFound) {
+        throw new Error('Category no found');
+    }
     //create product 
     const product = await Product.create({
         name, description, brand, category, sizes, colors, user: req.userAuthID, price, totalQty
     });
     //push the product into category
+    categoryFound.products.push(product._id);
+    //resave
+     await categoryFound.save();
     //send reponse
     res.json({
         status: "success",
