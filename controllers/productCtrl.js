@@ -1,5 +1,6 @@
 import Category from '../model/Category.js';
 import Product from '../model/Product.js';
+import Brand from '../model/Brand.js';
 import asyncHandler from 'express-async-handler'
 
 // @desc Create new product
@@ -7,7 +8,7 @@ import asyncHandler from 'express-async-handler'
 // @access Private/Admin
 
 export const createProductCtrl = asyncHandler(async (req, res) => {
-    const { name, description, brand, category, sizes, colors, user, price, totalQty } = req.body;
+    const { name, description, brand, category, sizes, colors, price, totalQty } = req.body;
     console.log(req.body);
 
     //product exist
@@ -15,11 +16,17 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
     if (productExist) {
         throw new Error('Product already exist');
     }
+    //Find the brand
+    const brandFound = await Brand.findOne({ name: brand.toLowerCase() });
+    if (!brandFound) {
+        throw new Error('Brand no found');
+    }
     //Find the category
-    const categoryFound = await Category.findOne({name:  category});
+    const categoryFound = await Category.findOne({ name: category });
     if (!categoryFound) {
         throw new Error('Category no found');
     }
+
     //create product 
     const product = await Product.create({
         name, description, brand, category, sizes, colors, user: req.userAuthID, price, totalQty
@@ -27,7 +34,12 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
     //push the product into category
     categoryFound.products.push(product._id);
     //resave
-     await categoryFound.save();
+    await categoryFound.save();
+
+    //push the product into brand
+    brandFound.products.push(product._id);
+    //resave
+    await brandFound.save();
     //send reponse
     res.json({
         status: "success",
