@@ -6,7 +6,6 @@ import asyncHandler from 'express-async-handler'
 // @desc Create new product
 // @route POST /api/v1/products
 // @access Private/Admin
-
 export const createProductCtrl = asyncHandler(async (req, res) => {
     const { name, description, brand, category, sizes, colors, price, totalQty } = req.body;
     console.log(req.body);
