@@ -7,6 +7,7 @@ import productRoutes from '../routes/productsRoutes.js';
 import categoryRoutes from '../routes/categoriesRoutes.js';
 import brandRoutes from '../routes/brandRoutes.js';
 import colorsRoutes from '../routes/colorRoutes.js';
+import reviewRoutes from '../routes/reviewRoutes.js';
 import { globalErrhandler, notFound } from '../midlewares/globalErrHandler.js';
 dbConnect();
 
@@ -17,6 +18,7 @@ app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/brands', brandRoutes);
 app.use('/api/v1/colors', colorsRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 //errr middleware
 app.use(notFound);
 app.use(globalErrhandler);
