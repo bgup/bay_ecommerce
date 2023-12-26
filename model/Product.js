@@ -55,7 +55,10 @@ const ProductSchema = new Schema(
       default: 0,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true }
+  }
 );
 //Virtuals
 //qty left
