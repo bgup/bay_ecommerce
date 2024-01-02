@@ -1,14 +1,46 @@
 import Order from '../model/Order.js';
 import asyncHandler from 'express-async-handler'
+import User from '../model/User.js';
+import Product from '../model/Product.js';
 
 // @desc Create new order
 // @route POST /api/v1/orders
 // @access Private/Admin
 export const createOrderCtrl = asyncHandler(async (req, res) => {
-    res.json({
-        status: 'success',
-        message: 'ctrl order',
+    //1. get the payload(customer, orderItems, shippingAddress, totalPrice)
+    const { orderItems, shippingAddress, totalPrice } = req.body;
+    //2. Find the user
+    const user = await User.findById(req.userAuthID);
+    //3. check if the order is not empty
+    if (orderItems?.length <= 0) {
+        throw new Error('No order items');
+    };
+    //4. create the order - save into DB
+    const order = await Order.create({
+        user: user?._id,
+        orderItems,
+        shippingAddress,
+        totalPrice
+    })
+    //5. Push order into User
+    user.orders.push(order?._id);
+    await user.save();
+    //6. update product: totalQty, totalSold
+    const products = await Product.find({ _id: { $in: orderItems } });
+    orderItems?.map(async (order) => {
+        const product = products?.find((product) => {
+            return product?._id?.toString() === order?._id?.toString();
+        });
+        if (product) {
+            product.totalSold += order.qty;
+        }
+        await product.save();
     });
+
+    //7. make payment (stripe)
+    //8. payment webhook
+    //9. update the user order
+
 });
 
 // @desc Get brands
