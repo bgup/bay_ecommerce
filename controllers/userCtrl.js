@@ -57,12 +57,15 @@ export const loginUserCtrl = asyncHandler(async (req, res) => {
 // @route POST /api/v1/users/profile
 // @access Private
 export const getUserProfileCtrl = asyncHandler(async (req, res) => {
-    const token = getTokenFromHeader(req);
-    const verified = verifyToken(token);
-    console.log(verified);
+    //find the user
+
+    const user = await User.findById(req.userAuthID).populate("orders");
+    console.log(req.userAuthID);
 
     res.json({
-        msg: "Profile page"
+        status: "success",
+        message: "User profile fetched successfully",
+        user,
     });
 });
 
